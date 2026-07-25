@@ -5,6 +5,7 @@ import auth from "../middleware/auth.js";
 import { v4 as uuidv4 } from "uuid";
 import { scrapeURL } from '../utilities/scraper.js';
 import { getYouTubeData } from '../utilities/youtube.js';
+import Summary from '../models/Summary.js';
 
 function isYouTubeURL(text) {
     return /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)/i.test(text);
@@ -89,9 +90,11 @@ if(!message) {
 
 let aiPrompt = message;
 const url = extractURL(message);
+let ytData = null;
+let scrapedData = null;
 
 if (url && isYouTubeURL(url)) {
-    const ytData = await getYouTubeData(url);
+    ytData = await getYouTubeData(url);
     if (ytData && ytData.transcript) {
         aiPrompt = `Summarize this YouTube video in a structured format using markdown:
 
@@ -110,7 +113,7 @@ Please provide:
 ${ytData.transcript.substring(0, 25000)}`;
     }
 } else if (url) {
-    const scrapedData = await scrapeURL(url);
+    scrapedData = await scrapeURL(url);
     if (scrapedData && scrapedData.content) {
         aiPrompt = `Summarize the following webpage in a structured format using markdown:
 
@@ -156,6 +159,29 @@ let thread = await Thread.findOne({
         thread.messages.push({role: "user", content: message});
     }
 const response =  await GoogleGenAIResponse(aiPrompt);
+
+// Save to summaries collection if it was a URL or YouTube summarization
+if (url) {
+    try {
+        const summaryDoc = new Summary({
+            userId: req.user.id,
+            threadId,
+            type: isYouTubeURL(url) ? 'youtube' : 'url',
+            title: isYouTubeURL(url) 
+                ? (ytData?.title || 'YouTube Video') 
+                : (scrapedData?.title || url),
+            source: url,
+            summary: response,
+            metadata: isYouTubeURL(url) 
+                ? { duration: ytData?.duration || '', channel: ytData?.channel || '', thumbnailUrl: ytData?.thumbnailUrl || '' }
+                : { wordCount: scrapedData?.wordCount || 0, domain: new URL(url).hostname }
+        });
+        await summaryDoc.save();
+    } catch (e) {
+        console.error('Failed to save summary:', e);
+    }
+}
+
     thread.messages.push({role: "assistant", content: response});
     thread.updatedAt = new Date();
     await thread.save();

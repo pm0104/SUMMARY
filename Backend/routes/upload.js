@@ -5,6 +5,7 @@ import { parseFile } from '../utilities/fileParser.js';
 import GoogleGenAIResponse from '../utilities/genimi.js';
 import Thread from '../models/thread.js';
 import { v4 as uuidv4 } from 'uuid';
+import Summary from '../models/Summary.js';
 
 const router = express.Router();
 
@@ -91,6 +92,24 @@ Please provide:
         });
         
         await thread.save();
+        
+        try {
+            const summaryDoc = new Summary({
+                userId: req.user._id || req.user.id,
+                threadId,
+                type: 'file',
+                title: parsedFile.fileName,
+                source: parsedFile.fileName,
+                summary,
+                metadata: {
+                    wordCount: parsedFile.wordCount,
+                    pageCount: parsedFile.pageCount
+                }
+            });
+            await summaryDoc.save();
+        } catch (e) {
+            console.error('Failed to save summary:', e);
+        }
         
         res.status(200).json({
             message: summary,
