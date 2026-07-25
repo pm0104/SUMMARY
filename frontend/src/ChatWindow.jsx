@@ -8,6 +8,15 @@ function ChatWindow() {
     const {prompt, setPrompt, reply, setReply, currThreadId, setPrevChats, setNewChat, token, onLogout} = useContext(MyContext);
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [detectedType, setDetectedType] = useState(null); // null, 'url', 'youtube'
+
+    function detectInputType(text) {
+        const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)/i;
+        const urlRegex = /https?:\/\/[^\s]+/i;
+        if (youtubeRegex.test(text)) return 'youtube';
+        if (urlRegex.test(text)) return 'url';
+        return null;
+    }
 
     const getReply = async () => {
         setLoading(true);
@@ -41,6 +50,7 @@ function ChatWindow() {
         } catch(err) {
             console.error(err);
         }
+        setDetectedType(null);
         setLoading(false);
     }
 
@@ -89,13 +99,21 @@ function ChatWindow() {
             
             <div className="chatInput">
                 <div className="inputBox">
-                    <input placeholder="Ask anything"
+                    <input placeholder="Paste a URL, or ask anything..."
                         value={prompt}
-                        onChange={(e) => setPrompt(e.target.value)}
+                        onChange={(e) => {
+                            setPrompt(e.target.value);
+                            setDetectedType(detectInputType(e.target.value));
+                        }}
                         onKeyDown={(e) => e.key === 'Enter'? getReply() : ''}
                     >
                            
                     </input>
+                    {detectedType && (
+                        <span className="inputDetectedBadge">
+                            {detectedType === 'youtube' ? '🎥 YouTube' : '🌐 Article'}
+                        </span>
+                    )}
                     <div id="submit" onClick={getReply}><i className="fa-solid fa-paper-plane"></i></div>
                 </div>
                 <p className="info">
