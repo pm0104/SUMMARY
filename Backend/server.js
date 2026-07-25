@@ -5,6 +5,7 @@ import { GoogleGenAI } from "@google/genai";
 import mongoose from "mongoose";
 import chatRoutes from "./routes/chat.js";
 import authRoutes from "./routes/auth.js";
+import uploadRoutes from './routes/upload.js';
 const PORT = process.env.PORT || 8080;  
 
 // testing the API response from gemmini using fetch
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api", chatRoutes);
+app.use("/api", uploadRoutes);
 app.listen(PORT , () => {
   console.log(`Server is running on port ${PORT}`);
   connectDB();
