@@ -1,6 +1,6 @@
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const pdfParse = require('pdf-parse');
+const { PDFParse } = require('pdf-parse');
 import mammoth from 'mammoth';
 
 export const parseFile = async (buffer, mimetype, originalname) => {
@@ -9,9 +9,11 @@ export const parseFile = async (buffer, mimetype, originalname) => {
         let pageCount = 0;
 
         if (mimetype === 'application/pdf') {
-            const data = await pdfParse(buffer);
-            text = data.text;
-            pageCount = data.numpages || 0;
+            const parser = new PDFParse({ data: buffer });
+            text = await parser.getText();
+            const info = await parser.getInfo();
+            pageCount = info?.numPages || 0;
+            parser.destroy();
         } else if (mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
             const result = await mammoth.extractRawText({ buffer });
             text = result.value;
