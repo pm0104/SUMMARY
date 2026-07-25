@@ -4,6 +4,11 @@ import GoogleGenAIResponse from "../utilities/genimi.js";
 import auth from "../middleware/auth.js";
 import { v4 as uuidv4 } from "uuid";
 import { scrapeURL } from '../utilities/scraper.js';
+import { getYouTubeData } from '../utilities/youtube.js';
+
+function isYouTubeURL(text) {
+    return /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/shorts\/)/i.test(text);
+}
 
 function extractURL(text) {
   const urlRegex = /(https?:\/\/[^\s]+)/gi;
@@ -85,7 +90,26 @@ if(!message) {
 let aiPrompt = message;
 const url = extractURL(message);
 
-if (url) {
+if (url && isYouTubeURL(url)) {
+    const ytData = await getYouTubeData(url);
+    if (ytData && ytData.transcript) {
+        aiPrompt = `Summarize this YouTube video in a structured format using markdown:
+
+## 🎥 ${ytData.title || 'Untitled Video'}
+**Channel:** ${ytData.channel || 'Unknown'} | **Duration:** ${ytData.duration || 'Unknown'}
+
+Please provide:
+1. **📋 Overview** — what this video is about (1 paragraph)
+2. **⏱️ Key Topics with Timestamps** — main topics discussed (estimate timestamps)
+3. **📝 Summary** — a clear 2-3 paragraph summary
+4. **💡 Main Takeaways** — the most important points to remember
+
+---
+
+**Video Transcript:**
+${ytData.transcript.substring(0, 25000)}`;
+    }
+} else if (url) {
     const scrapedData = await scrapeURL(url);
     if (scrapedData && scrapedData.content) {
         aiPrompt = `Summarize the following webpage in a structured format using markdown:
