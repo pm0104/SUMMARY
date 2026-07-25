@@ -3,7 +3,13 @@ import Thread from "../models/thread.js";
 import GoogleGenAIResponse from "../utilities/genimi.js";
 import auth from "../middleware/auth.js";
 import { v4 as uuidv4 } from "uuid";
+import { scrapeURL } from '../utilities/scraper.js';
 
+function extractURL(text) {
+  const urlRegex = /(https?:\/\/[^\s]+)/gi;
+  const match = text.match(urlRegex);
+  return match ? match[0] : null;
+}
 
 const router = express.Router();
 
@@ -76,6 +82,30 @@ if(!message) {
     return res.status(400).json({ error: "message is required" });
 }
 
+let aiPrompt = message;
+const url = extractURL(message);
+
+if (url) {
+    const scrapedData = await scrapeURL(url);
+    if (scrapedData && scrapedData.content) {
+        aiPrompt = `Summarize the following webpage in a structured format using markdown:
+
+## 📰 ${scrapedData.title || 'Untitled'}
+**Source:** ${url}
+
+Please provide:
+1. **📌 Key Points** — the most important facts/arguments (bullet list)
+2. **📝 Summary** — a clear 2-3 paragraph summary
+3. **💡 Key Takeaways** — actionable insights or conclusions
+4. **⏱️ Reading Stats** — Original: ~${scrapedData.wordCount} words
+
+---
+
+**Article Content:**
+${scrapedData.content}`;
+    }
+}
+
 if(!threadId){
     threadId = uuidv4();
 }
@@ -101,7 +131,7 @@ let thread = await Thread.findOne({
     }else{
         thread.messages.push({role: "user", content: message});
     }
-const response =  await GoogleGenAIResponse(message);
+const response =  await GoogleGenAIResponse(aiPrompt);
     thread.messages.push({role: "assistant", content: response});
     thread.updatedAt = new Date();
     await thread.save();
