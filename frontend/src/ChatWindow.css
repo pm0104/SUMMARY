@@ -169,6 +169,39 @@ input:focus {
     background: rgba(139, 92, 246, 0.1);
 }
 
+/* Mic button */
+.micBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    color: #b4b4b4;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-right: 6px;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.micBtn:hover {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.micBtn.listening {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.15);
+    animation: micPulse 1.2s infinite;
+}
+
+@keyframes micPulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { transform: scale(1.08); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
 /* File preview banner */
 .filePreview {
     display: flex;

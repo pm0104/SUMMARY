@@ -18,7 +18,8 @@ function SummaryHub({ onBack }) {
         { key: 'all', label: 'All', icon: '📊' },
         { key: 'url', label: 'Articles', icon: '🌐' },
         { key: 'file', label: 'Documents', icon: '📄' },
-        { key: 'youtube', label: 'Videos', icon: '🎥' }
+        { key: 'youtube', label: 'Videos', icon: '🎥' },
+        { key: 'audio', label: 'Audio', icon: '🎵' }
     ];
 
     const fetchSummaries = async () => {
@@ -92,6 +93,7 @@ function SummaryHub({ onBack }) {
             case 'url': return '🌐';
             case 'youtube': return '🎥';
             case 'file': return '📄';
+            case 'audio': return '🎵';
             default: return '💬';
         }
     };

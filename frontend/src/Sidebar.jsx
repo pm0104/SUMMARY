@@ -2,6 +2,7 @@ import "./Sidebar.css";
 import { useContext, useEffect } from "react";
 import { MyContext } from "./MyContext.jsx";
 import { v1 as uuidv1 } from "uuid";
+import summaryLogo from "./assets/summary_logo.svg";
 
 function Sidebar() {
     const {
@@ -140,13 +141,16 @@ function Sidebar() {
 
     return (
         <section className="sidebar">
-            <button onClick={createNewChat}>
-                <img
-                    src="src/assets/blacklogo.png"
-                    alt="gpt logo"
-                    className="logo"
-                />
-                <span>
+            <button className="newChatBtn" onClick={createNewChat}>
+                <div className="brandContainer">
+                    <img
+                        src={summaryLogo}
+                        alt="SUMMARY logo"
+                        className="logo"
+                    />
+                    <span className="brandName">SUMMARY</span>
+                </div>
+                <span className="newChatIcon">
                     <i className="fa-solid fa-pen-to-square"></i>
                 </span>
             </button>

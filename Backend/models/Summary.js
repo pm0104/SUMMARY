@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const summarySchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     threadId: { type: String, required: true },
-    type: { type: String, enum: ['url', 'youtube', 'file', 'chat'], required: true },
+    type: { type: String, enum: ['url', 'youtube', 'file', 'chat', 'audio'], required: true },
     title: { type: String, required: true },
     source: { type: String, default: '' }, // URL, filename, etc.
     summary: { type: String, required: true },
