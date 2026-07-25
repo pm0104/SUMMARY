@@ -1,7 +1,7 @@
 import "./ChatWindow.css";
 import Chat from "./Chat.jsx";
 import { MyContext } from "./MyContext.jsx";
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import {ScaleLoader} from "react-spinners";
 
 function ChatWindow() {
@@ -9,6 +9,8 @@ function ChatWindow() {
     const [loading, setLoading] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
     const [detectedType, setDetectedType] = useState(null); // null, 'url', 'youtube'
+    const [selectedFile, setSelectedFile] = useState(null);
+    const fileInputRef = useRef(null);
 
     function detectInputType(text) {
         const youtubeRegex = /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)/i;
@@ -18,7 +20,79 @@ function ChatWindow() {
         return null;
     }
 
+    const handleFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const allowedTypes = [
+            'application/pdf',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'text/plain',
+            'text/markdown'
+        ];
+        
+        if (!allowedTypes.includes(file.type)) {
+            alert('Please upload a PDF, DOCX, TXT, or MD file.');
+            return;
+        }
+        
+        if (file.size > 20 * 1024 * 1024) {
+            alert('File size must be under 20MB.');
+            return;
+        }
+        
+        setSelectedFile(file);
+        setDetectedType('file');
+    };
+
+    const uploadFile = async () => {
+        if (!selectedFile) return;
+        
+        setLoading(true);
+        setNewChat(false);
+        
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('threadId', currThreadId);
+        
+        try {
+            const response = await fetch('http://localhost:8080/api/upload', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+            
+            const res = await response.json();
+            
+            if (response.status === 401) {
+                onLogout();
+                return;
+            }
+            
+            if (!response.ok) {
+                throw new Error(res.error || res.message || 'Failed to upload file');
+            }
+            
+            // Set the prompt to show what was uploaded
+            setPrompt(`📄 Uploaded: ${selectedFile.name}`);
+            setReply(res.message);
+        } catch (err) {
+            console.error(err);
+            alert(err.message || 'File upload failed');
+        }
+        
+        setSelectedFile(null);
+        setDetectedType(null);
+        setLoading(false);
+    };
+
     const getReply = async () => {
+        if (selectedFile) {
+            await uploadFile();
+            return;
+        }
         setLoading(true);
         setNewChat(false);
         const options = {
@@ -97,8 +171,37 @@ function ChatWindow() {
             <ScaleLoader color="#fff" loading={loading}>
             </ScaleLoader>
             
+            {selectedFile && (
+                <div className="filePreview">
+                    <div className="filePreviewInfo">
+                        <i className="fa-solid fa-file-lines"></i>
+                        <span>{selectedFile.name}</span>
+                        <span className="filePreviewSize">
+                            {(selectedFile.size / 1024).toFixed(0)} KB
+                        </span>
+                    </div>
+                    <button className="filePreviewRemove" onClick={() => {
+                        setSelectedFile(null);
+                        setDetectedType(null);
+                        if (fileInputRef.current) fileInputRef.current.value = '';
+                    }}>
+                        <i className="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            )}
+            
             <div className="chatInput">
                 <div className="inputBox">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileSelect}
+                        accept=".pdf,.docx,.txt,.md"
+                        style={{ display: 'none' }}
+                    />
+                    <div className="attachBtn" onClick={() => fileInputRef.current?.click()}>
+                        <i className="fa-solid fa-paperclip"></i>
+                    </div>
                     <input placeholder="Paste a URL, or ask anything..."
                         value={prompt}
                         onChange={(e) => {
@@ -111,7 +214,7 @@ function ChatWindow() {
                     </input>
                     {detectedType && (
                         <span className="inputDetectedBadge">
-                            {detectedType === 'youtube' ? '🎥 YouTube' : '🌐 Article'}
+                            {detectedType === 'youtube' ? '🎥 YouTube' : detectedType === 'file' ? '📄 Document' : '🌐 Article'}
                         </span>
                     )}
                     <div id="submit" onClick={getReply}><i className="fa-solid fa-paper-plane"></i></div>

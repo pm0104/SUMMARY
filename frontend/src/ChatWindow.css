@@ -147,3 +147,83 @@ input:focus {
     from { opacity: 0; transform: translateY(-50%) scale(0.9); }
     to   { opacity: 1; transform: translateY(-50%) scale(1); }
 }
+
+/* Attach button */
+.attachBtn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    color: #b4b4b4;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-right: 4px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+}
+
+.attachBtn:hover {
+    color: #c4b5fd;
+    background: rgba(139, 92, 246, 0.1);
+}
+
+/* File preview banner */
+.filePreview {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(56, 189, 248, 0.1));
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 12px;
+    padding: 10px 16px;
+    max-width: 700px;
+    width: 100%;
+    margin-bottom: 8px;
+    animation: badgeFadeIn 0.3s ease;
+}
+
+.filePreviewInfo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #c4b5fd;
+    font-size: 0.85rem;
+    overflow: hidden;
+}
+
+.filePreviewInfo i {
+    font-size: 1.1rem;
+    color: #8b5cf6;
+}
+
+.filePreviewInfo span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filePreviewSize {
+    color: #94a3b8;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+}
+
+.filePreviewRemove {
+    background: none;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.filePreviewRemove:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+}
