@@ -85,3 +85,20 @@ button:hover {
     background-color: rgba(180, 180, 180, 0.05);
     border-radius: 10px;
 }
+
+.hubBtn {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(56, 189, 248, 0.08));
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    margin-top: 0.5rem;
+    color: #c4b5fd;
+    transition: all 0.3s;
+}
+
+.hubBtn:hover {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(56, 189, 248, 0.15));
+    border-color: rgba(139, 92, 246, 0.4);
+}
+
+.hubBtn i {
+    margin-right: 8px;
+}

@@ -13,6 +13,7 @@ function Sidebar() {
         setReply,
         setCurrThreadId,
         setPrevChats,
+        setCurrentView,
         token,
         onLogout
     } = useContext(MyContext);
@@ -147,6 +148,12 @@ function Sidebar() {
                 />
                 <span>
                     <i className="fa-solid fa-pen-to-square"></i>
+                </span>
+            </button>
+            
+            <button className="sidebarBtn hubBtn" onClick={() => setCurrentView('hub')}>
+                <span>
+                    <i className="fa-solid fa-chart-simple"></i> My Summaries
                 </span>
             </button>
 

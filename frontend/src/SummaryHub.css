@@ -1,0 +1,304 @@
+.summaryHub {
+    background-color: #212121;
+    min-height: 100vh;
+    width: 100%;
+    padding: 2rem;
+    overflow-y: auto;
+}
+
+/* Header */
+.hubHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.hubHeaderLeft {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.hubHeaderLeft h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #c4b5fd, #38bdf8);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+}
+
+.hubBackBtn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #b4b4b4;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.hubBackBtn:hover {
+    background: rgba(139, 92, 246, 0.15);
+    color: #c4b5fd;
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+.hubSearch {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 0 16px;
+    max-width: 300px;
+    width: 100%;
+    transition: border-color 0.3s;
+}
+
+.hubSearch:focus-within {
+    border-color: rgba(139, 92, 246, 0.5);
+}
+
+.hubSearch i {
+    color: #666;
+    font-size: 0.85rem;
+    margin-right: 10px;
+}
+
+.hubSearch input {
+    background: none;
+    border: none;
+    color: #fff;
+    padding: 12px 0;
+    font-size: 0.85rem;
+    width: 100%;
+    outline: none;
+    font-family: 'Inter', sans-serif;
+}
+
+/* Stats Cards */
+.hubStats {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.hubStatCard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 14px;
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 140px;
+}
+
+.hubStatCard:hover {
+    background: rgba(139, 92, 246, 0.08);
+    border-color: rgba(139, 92, 246, 0.2);
+}
+
+.hubStatCard.active {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(56, 189, 248, 0.1));
+    border-color: rgba(139, 92, 246, 0.4);
+}
+
+.hubStatIcon {
+    font-size: 1.2rem;
+}
+
+.hubStatCount {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+}
+
+.hubStatLabel {
+    font-size: 0.8rem;
+    color: #94a3b8;
+}
+
+/* Grid */
+.hubGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1rem;
+}
+
+/* Cards */
+.hubCard {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    animation: cardFadeIn 0.4s ease;
+}
+
+.hubCard:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(139, 92, 246, 0.25);
+    transform: translateY(-2px);
+}
+
+.hubCard.expanded {
+    grid-column: 1 / -1;
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(139, 92, 246, 0.3);
+}
+
+@keyframes cardFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hubCardHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.8rem;
+}
+
+.hubCardType {
+    font-size: 1.3rem;
+}
+
+.hubCardDate {
+    font-size: 0.75rem;
+    color: #64748b;
+}
+
+.hubCardDelete {
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    opacity: 0;
+    transition: all 0.2s;
+}
+
+.hubCard:hover .hubCardDelete {
+    opacity: 1;
+}
+
+.hubCardDelete:hover {
+    color: #f87171;
+    background: rgba(248, 113, 113, 0.1);
+}
+
+.hubCardTitle {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #e2e8f0;
+    margin: 0 0 0.5rem 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.hubCardSource {
+    font-size: 0.75rem;
+    color: #8b5cf6;
+    margin: 0 0 0.5rem 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.hubCardMeta {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.hubCardMeta span {
+    font-size: 0.7rem;
+    color: #64748b;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.hubCardContent {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    line-height: 1.7;
+    text-align: left;
+}
+
+.hubCardContent h1, .hubCardContent h2, .hubCardContent h3 {
+    color: #e2e8f0;
+    margin: 1rem 0 0.5rem;
+}
+
+.hubCardContent ul, .hubCardContent ol {
+    padding-left: 1.5rem;
+}
+
+.hubCardContent strong {
+    color: #c4b5fd;
+}
+
+/* Empty State */
+.hubEmpty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #64748b;
+}
+
+.hubEmptyIcon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.hubEmpty p {
+    margin: 0.3rem 0;
+}
+
+.hubEmptySub {
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .summaryHub {
+        padding: 1rem;
+    }
+    
+    .hubStats {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 0.5rem;
+    }
+    
+    .hubStatCard {
+        min-width: 100px;
+        flex-shrink: 0;
+    }
+    
+    .hubGrid {
+        grid-template-columns: 1fr;
+    }
+}

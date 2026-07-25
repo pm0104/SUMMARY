@@ -4,6 +4,7 @@ import ChatWindow from "./ChatWindow.jsx";
 import { MyContext } from "./MyContext.jsx";
 import { useState } from "react";
 import { v1 as uuidv1 } from "uuid";
+import SummaryHub from "./SummaryHub.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 
@@ -16,6 +17,7 @@ function App() {
   const [prevChats, setPrevChats] = useState([]);
   const [newChat, setNewChat] = useState(true);
   const [allThreads, setAllThreads] = useState([]);
+  const [currentView, setCurrentView] = useState("chat");
 
   const resetChatState = () => {
     setPrompt("");
@@ -66,6 +68,8 @@ function App() {
     setPrevChats,
     allThreads,
     setAllThreads,
+    currentView,
+    setCurrentView,
     token,
     onLogout: handleLogout,
   };
@@ -73,8 +77,14 @@ function App() {
   return (
     <div className="app" key={token}>
       <MyContext.Provider value={providerValues}>
-        <Sidebar />
-        <ChatWindow />
+        {currentView === 'hub' ? (
+          <SummaryHub onBack={() => setCurrentView('chat')} />
+        ) : (
+          <>
+            <Sidebar />
+            <ChatWindow />
+          </>
+        )}
       </MyContext.Provider>
     </div>
   );
