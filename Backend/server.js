@@ -34,9 +34,13 @@ app.use(async (req, res, next) => {
 });
 
 app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 app.use("/api", chatRoutes);
+app.use("/", chatRoutes);
 app.use("/api", uploadRoutes);
+app.use("/", uploadRoutes);
 app.use("/api", summaryRoutes);
+app.use("/", summaryRoutes);
 
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {

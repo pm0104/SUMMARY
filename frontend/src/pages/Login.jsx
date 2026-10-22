@@ -26,10 +26,20 @@ function Login({ onLogin, onSwitchToRegister }) {
         body: JSON.stringify({ email, password }),
       });
 
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        throw new Error(
+          response.status === 404
+            ? "API endpoint not found (404). Ensure backend is deployed and Vercel Root Directory is set to repository root."
+            : `Server error (${response.status}): ${text.slice(0, 100)}`
+        );
+      }
+
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message);
+        throw new Error(data.message || "Login failed");
       }
 
       onLogin(data.token);
