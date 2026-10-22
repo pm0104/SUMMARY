@@ -9,30 +9,43 @@ import uploadRoutes from './routes/upload.js';
 import summaryRoutes from './routes/summary.js';
 const PORT = process.env.PORT || 8080;  
 
-// testing the API response from gemmini using fetch
-
 const app = express();
 app.use(express.json());
 app.use(cors());
+
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected || mongoose.connection.readyState === 1) {
+    return;
+  }
+  try {
+    const db = await mongoose.connect(process.env.MONGODB_URI);
+    isConnected = db.connections[0].readyState === 1;
+    console.log("Connected to MongoDB");
+  } catch (err) {
+    console.error("Error connecting to MongoDB:", err);
+  }
+};
+
+// Ensure database connection before handling requests (especially for serverless)
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
 app.use("/api/auth", authRoutes);
 app.use("/api", chatRoutes);
 app.use("/api", uploadRoutes);
 app.use("/api", summaryRoutes);
-app.listen(PORT , () => {
-  console.log(`Server is running on port ${PORT}`);
-  connectDB();
-});
 
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGODB_URI); 
-       
-        console.log("Connected to MongoDB");
-      }
-      catch (err) {
-        console.error("Error connecting to MongoDB:", err);
-      }
-    }
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    connectDB();
+  });
+}
+
+export default app;
 
 
 

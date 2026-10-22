@@ -21,7 +21,7 @@ function Sidebar() {
 
     const getAllThreads = async () => {
         try {
-            const response = await fetch("http://localhost:8080/api/threads", {
+            const response = await fetch("/api/threads", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`
@@ -70,7 +70,7 @@ function Sidebar() {
 
         try {
             const response = await fetch(
-                `http://localhost:8080/api/threads/${newThreadId}`,
+                `/api/threads/${newThreadId}`,
                 {
                     method: "GET",
                     headers: {
@@ -104,7 +104,7 @@ function Sidebar() {
     const deleteThread = async (threadId) => {
         try {
             const response = await fetch(
-                `http://localhost:8080/api/threads/${threadId}`,
+                `/api/threads/${threadId}`,
                 {
                     method: "DELETE",
                     headers: {

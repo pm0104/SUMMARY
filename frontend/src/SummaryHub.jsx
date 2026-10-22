@@ -29,7 +29,7 @@ function SummaryHub({ onBack }) {
             if (activeFilter !== 'all') params.append('type', activeFilter);
             if (searchQuery) params.append('search', searchQuery);
             
-            const response = await fetch(`http://localhost:8080/api/summaries?${params}`, {
+            const response = await fetch(`/api/summaries?${params}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -42,7 +42,7 @@ function SummaryHub({ onBack }) {
 
     const fetchStats = async () => {
         try {
-            const response = await fetch('http://localhost:8080/api/summaries-stats', {
+            const response = await fetch('/api/summaries-stats', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -59,7 +59,7 @@ function SummaryHub({ onBack }) {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:8080/api/summaries/${id}`, {
+            const response = await fetch(`/api/summaries/${id}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const data = await response.json();
@@ -74,7 +74,7 @@ function SummaryHub({ onBack }) {
         e.stopPropagation();
         if (!confirm('Delete this summary?')) return;
         try {
-            await fetch(`http://localhost:8080/api/summaries/${id}`, {
+            await fetch(`/api/summaries/${id}`, {
                 method: 'DELETE',
                 headers: { 'Authorization': `Bearer ${token}` }
             });

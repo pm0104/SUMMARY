@@ -142,7 +142,7 @@ function ChatWindow() {
         formData.append('threadId', currThreadId);
         
         try {
-            const response = await fetch('http://localhost:8080/api/upload', {
+            const response = await fetch('/api/upload', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -197,7 +197,7 @@ function ChatWindow() {
         };
 
         try {
-            const response = await fetch("http://localhost:8080/api/chat", options);
+            const response = await fetch("/api/chat", options);
             const res = await response.json();
 
             if (response.status === 401) {
