@@ -1,4 +1,3 @@
-import { PDFParse } from 'pdf-parse';
 import mammoth from 'mammoth';
 
 export const parseFile = async (buffer, mimetype, originalname) => {
@@ -7,6 +6,7 @@ export const parseFile = async (buffer, mimetype, originalname) => {
         let pageCount = 0;
 
         if (mimetype === 'application/pdf') {
+            const { PDFParse } = await import('pdf-parse');
             const parser = new PDFParse({ data: buffer });
             const textResult = await parser.getText();
             text = textResult?.text || '';
