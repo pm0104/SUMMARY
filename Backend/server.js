@@ -5,7 +5,14 @@ if (typeof globalThis.Path2D === "undefined") globalThis.Path2D = class Path2D {
 
 import express from "express";
 import cors from "cors";
-import "dotenv/config";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, ".env") });
+dotenv.config();
 import { GoogleGenAI } from "@google/genai";
 import mongoose from "mongoose";
 import chatRoutes from "./routes/chat.js";
@@ -23,12 +30,18 @@ const connectDB = async () => {
   if (isConnected || mongoose.connection.readyState === 1) {
     return;
   }
+  if (!process.env.MONGODB_URI) {
+    console.warn("MONGODB_URI environment variable is not defined.");
+    return;
+  }
   try {
-    const db = await mongoose.connect(process.env.MONGODB_URI);
+    const db = await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
     isConnected = db.connections[0].readyState === 1;
     console.log("Connected to MongoDB");
   } catch (err) {
-    console.error("Error connecting to MongoDB:", err);
+    console.error("Error connecting to MongoDB:", err.message || err);
   }
 };
 
@@ -36,6 +49,17 @@ const connectDB = async () => {
 app.use(async (req, res, next) => {
   await connectDB();
   next();
+});
+
+// Health check endpoint for testing deployment and DB connection
+app.get(["/api/health", "/health"], (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? "connected" : "disconnected";
+  res.status(200).json({
+    status: "ok",
+    message: "Backend is running",
+    database: dbStatus,
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.use("/api/auth", authRoutes);
